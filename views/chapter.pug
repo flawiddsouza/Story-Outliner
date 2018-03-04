@@ -1,0 +1,81 @@
+extends layout
+block content
+    - var work_url = '/work/'+ chapter['work_id'];
+    - var chapter_url = '/chapter/' + chapter['id'];
+    - var base_url = work_url + chapter_url;
+    div.panel.panel-default
+        div.panel-heading
+            a(href=work_url) #{chapter['work_name']}
+            |  —  
+            a(href=base_url) Chapter #{chapter['chapter_number']}: #{chapter['chapter_name']}
+            form.inline-block.pull-right(action=base_url +"/delete", method="post") 
+                button.btn.btn-primary.btn-xs.confirm-delete Delete
+        div.panel-body.edit-content(data-name='chapter_description', data-url=base_url +'/update') #{chapter['chapter_description']}
+
+    div.panel.panel-default
+        div.panel-heading Outline
+        div.panel-body.edit-content(data-name='chapter_outline', data-url=base_url +'/update')
+            != chapter['chapter_outline']
+
+    div.panel.panel-default
+        div.panel-heading.clearfix.vertical-middle Scenes
+            button.btn.btn-default.pull-right(data-toggle="modal", data-target="#addScene") Add
+        table.table
+            thead
+                tr
+                    th Scene
+                    th Scene Description
+                    th
+            
+            if scenes.length != 0
+                each scene in scenes
+                    tr.clickable-row(data-href=base_url +"/scene/"+ scene['id'])
+                        td Scene #{scene['scene_number']}
+                        td #{scene['scene_description']}
+                        td
+                            button.btn.btn-primary.btn-xs.quick-edit(data-target="#editScene", data-url=base_url +"/scene/"+ scene['id'] +"/update", data-scene-number=scene['scene_number'], data-scene-description=scene['scene_description']) Edit
+                            form.inline-block(action=base_url +"/scene/"+ scene['id'] +"/delete", method="post") 
+                                button.btn.btn-primary.btn-xs.confirm-delete Delete
+            else
+                tr 
+                    td.text-center(colspan="4") ~ Add New Scenes to make this go away ~
+
+    //- Add Scene Modal - Note: we need tabindex='-1' to be able to close modal using esc key
+    div.modal#addScene(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title New Scene
+            form(action=base_url +"/scene/add", method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="scene_number") Scene Number:
+                        input.form-control(type="number", name="scene_number", required)
+                    div.form-group
+                        label.control-label(for="scene_description") Description:
+                        input.form-control(type="text", name="scene_description")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Add Scene
+
+    //- Edit Scene Modal
+    div.modal#editScene(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title Edit Scene
+            form(method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="scene_number") Scene Number:
+                        input.form-control(type="number", name="scene_number", required)
+                    div.form-group
+                        label.control-label(for="scene_description") Description:
+                        input.form-control(type="text", name="scene_description")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Update Scene

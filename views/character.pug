@@ -1,0 +1,74 @@
+extends layout
+block content
+    - var work_url = '/work/'+ character['work_id'];
+    - var character_url = '/character/' + character['id'];
+    - var base_url = work_url + character_url;
+    div.panel.panel-default
+        div.panel-heading
+            a(href=work_url) #{character['work_name']}
+            |  —  
+            a(href=base_url) #{character['character_name']}
+            form.inline-block.pull-right(action=base_url +"/delete", method="post") 
+                button.btn.btn-primary.btn-xs.confirm-delete Delete
+        div.panel-body.edit-content(data-name='character_description', data-url=base_url +'/update') #{character['character_description']}
+
+    div.panel.panel-default
+        div.panel-heading Outline
+        div.panel-body.edit-content(data-name='character_outline', data-url=base_url +'/update')
+            != character['character_outline']
+
+    div.panel.panel-default
+        div.panel-heading.clearfix.vertical-middle Character Fields
+            button.btn.btn-default.pull-right(data-toggle="modal", data-target="#addCharacterField") Add
+        table.table
+            if character_fields.length != 0
+                each character_field in character_fields
+                    tr
+                        td #{character_field['field_name']}
+                        td #{character_field['field_value']}
+                        td
+                            button.btn.btn-primary.btn-xs.quick-edit(data-target="#editCharacterField", data-url=base_url +"/field/"+ character_field['id'] +"/update", data-field-name=character_field['field_name'], data-field-value=character_field['field_value']) Edit
+                            form.inline-block(action=base_url +"/field/"+ character_field['id'] +"/delete", method="post") 
+                                button.btn.btn-primary.btn-xs.confirm-delete Delete
+            else
+                td.text-center ~ Add New Fields to make this go away ~
+
+    //- Add Field Modal
+    div.modal#addCharacterField(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title New Field
+            form(action=base_url +"/field/add", method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="field_name") Field Name:
+                        input.form-control(type="text", name="field_name", required)
+                    div.form-group
+                        label.control-label(for="field_value") Field Value:
+                        input.form-control(type="text", name="field_value", required)                            
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Add Field
+
+    //- Edit Field Modal
+    div.modal#editCharacterField(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title Edit Field
+            form(method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="field_name") Field Name:
+                        input.form-control(type="text", name="field_name", required)
+                    div.form-group
+                        label.control-label(for="field_value") Field Value:
+                        input.form-control(type="text", name="field_value", required)                            
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Update Field

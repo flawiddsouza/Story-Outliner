@@ -1,0 +1,47 @@
+a, a:hover {
+    color: inherit; 
+}
+
+tr.clickable-row {
+    cursor: pointer;
+} 
+
+form.inline-block {
+    display: inline-block;
+}
+
+.vertical-middle {
+    line-height: 2.7em;
+}
+
+.panel-body textarea {
+    min-width: 100%;
+}
+
+.panel-heading input {
+    min-width: 100%;
+}
+
+.panel-body a:hover {
+    text-decoration: none;
+}
+
+/*.hover-highlight:hover, tr.clickable-row:hover {
+    background-color: #fcf9f9;
+}*/
+
+/* Masonry */
+.row-masonry {
+    column-width: 24em;
+    -moz-column-width: 24em;
+    -webkit-column-width: 24em;
+    column-gap: 0.5em;
+    -moz-column-gap: 0.5em;
+    -webkit-column-gap: 0.5em; 
+}
+
+.panel-masonry {
+    display: inline-block;
+    margin: 0.5em;
+    width: 96%;
+}

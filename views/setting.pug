@@ -1,0 +1,18 @@
+extends layout
+block content
+    - var work_url = '/work/'+ setting['work_id'];
+    - var setting_url = '/setting/' + setting['id'];
+    - var base_url = work_url + setting_url;
+    div.panel.panel-default
+        div.panel-heading
+            a(href=work_url) #{setting['work_name']}
+            |  —  
+            a(href=base_url) #{setting['setting_name']}
+            form.inline-block.pull-right(action=base_url +"/delete", method="post") 
+                button.btn.btn-primary.btn-xs.confirm-delete Delete
+        div.panel-body.edit-content(data-name='setting_description', data-url=base_url +'/update') #{setting['setting_description']}
+
+    div.panel.panel-default
+        div.panel-heading Outline
+        div.panel-body.edit-content(data-name='setting_outline', data-url=base_url +'/update')
+            != setting['setting_outline']

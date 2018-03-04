@@ -1,0 +1,3 @@
+# 12-Aug-16
+- works variable for /work/:id is not updated on refresh, but it will be updated if you got to / and return to /work/:id
+- onclick textarea for the description field should not allow linebreaks but it does at the moment. this causes whatever the user types using linebreaks to be displayed in a single line as escaped html output, once the page is refreshed. The description field was designed and assumed to allow only a single line of text. Long lines with linebreaks would be the responsiblity of the outline field.

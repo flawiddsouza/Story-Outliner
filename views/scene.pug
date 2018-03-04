@@ -1,0 +1,133 @@
+extends layout
+block content
+    - var work_url = '/work/'+ scene['work_id'];
+    - var chapter_url = '/chapter/'+ scene['chapter_id'];
+    - var scene_url =  '/scene/' + scene['id'];
+    - var base_url = work_url + chapter_url + scene_url;
+    div.panel.panel-default
+        div.panel-heading
+            a(href=work_url) #{scene['work_name']}
+            |  —  
+            a(href=work_url + chapter_url) Chapter #{scene['chapter_number']}: #{scene['chapter_name']}
+            |  - 
+            a(href) Scene #{scene['scene_number']}
+            form.inline-block.pull-right(action=base_url +"/delete", method="post") 
+                button.btn.btn-primary.btn-xs.confirm-delete Delete
+        div.panel-body.edit-content(data-name='scene_description', data-url=base_url +'/update') #{scene['scene_description']}
+
+    div.panel.panel-default
+        div.panel-heading.clearfix.vertical-middle Characters
+            if scene_characters.length != 0
+                button.btn.btn-default.pull-right(data-toggle="modal", data-target="#removeCharacter") Remove
+                span.pull-right &nbsp
+            if characters.length != 0
+                button.btn.btn-default.pull-right(data-toggle="modal", data-target="#addCharacter") Add
+        if scene_characters.length != 0
+            div.panel-body
+                - var i = 0;
+                each scene_character in scene_characters
+                    a(href=work_url +"/character/"+ scene_character['character_id'])  #{scene_character['character_name']}
+                    - i++;
+                    if i < scene_characters.length
+                        | , 
+
+    div.panel.panel-default
+        div.panel-heading.clearfix.vertical-middle Settings
+            if scene_settings.length != 0
+                button.btn.btn-default.pull-right(data-toggle="modal", data-target="#removeSetting") Remove
+                span.pull-right &nbsp
+            if settings.length != 0
+                button.btn.btn-default.pull-right(data-toggle="modal", data-target="#addSetting") Add
+        if scene_settings.length != 0
+            div.panel-body
+                - var i = 0;
+                each scene_setting in scene_settings
+                    a(href=work_url +"/setting/"+ scene_setting['setting_id']) #{scene_setting['setting_name']}
+                    - i++;
+                    if i < scene_settings.length
+                        | , 
+
+    div.panel.panel-default
+        div.panel-heading Outline
+        div.panel-body.edit-content(data-name='scene_outline', data-url=base_url +'/update')
+            != scene['scene_outline']
+
+    if characters.length != 0
+        //- Add Character Modal
+        div.modal#addCharacter(tabindex='-1')
+          div.modal-dialog.modal-sm
+            div.modal-content
+                div.modal-header
+                    button.close(data-dismiss="modal", aria-label="Close") 
+                        span(aria-hidden="true") &times;
+                    h4.modal-title Add Character
+                form(action=base_url +"/character/add", method="post")
+                    div.modal-body
+                        div.form-group
+                            label.control-label(for="character_id") Character:
+                            select.form-control(name="character_id" data-placeholder="Choose a Character...", required)
+                                each character in characters
+                                    option(value=character['id']) #{character['character_name']}
+                    div.modal-footer
+                        button.btn.btn-default(data-dismiss="modal", type="button") Close
+                        button.btn.btn-primary Add
+
+    if scene_characters.length != 0
+        //- Remove Character Modal
+        div.modal#removeCharacter(tabindex='-1')
+          div.modal-dialog.modal-sm
+            div.modal-content
+                div.modal-header
+                    button.close(data-dismiss="modal", aria-label="Close") 
+                        span(aria-hidden="true") &times;
+                    h4.modal-title Remove Character
+                form(action=base_url +"/character/delete", method="post")
+                    div.modal-body
+                        div.form-group
+                            label.control-label(for="character_id") Character:
+                            select.form-control(name="character_id" data-placeholder="Choose a Character...", required)
+                                each scene_character in scene_characters
+                                    option(value=scene_character['id']) #{scene_character['character_name']}
+                    div.modal-footer
+                        button.btn.btn-default(data-dismiss="modal", type="button") Close
+                        button.btn.btn-primary Remove
+    
+    if settings.length != 0
+        //- Add Setting Modal
+        div.modal#addSetting(tabindex='-1')
+          div.modal-dialog.modal-sm
+            div.modal-content
+                div.modal-header
+                    button.close(data-dismiss="modal", aria-label="Close") 
+                        span(aria-hidden="true") &times;
+                    h4.modal-title Add Setting
+                form(action=base_url +"/setting/add", method="post")
+                    div.modal-body
+                        div.form-group
+                            label.control-label(for="setting_id") Setting:
+                            select.form-control(name="setting_id" data-placeholder="Choose a Setting...", required)
+                                each setting in settings
+                                    option(value=setting['id']) #{setting['setting_name']}
+                    div.modal-footer
+                        button.btn.btn-default(data-dismiss="modal", type="button") Close
+                        button.btn.btn-primary Add
+
+    if scene_settings.length != 0
+        //- Remove Setting Modal
+        div.modal#removeSetting(tabindex='-1')
+          div.modal-dialog.modal-sm
+            div.modal-content
+                div.modal-header
+                    button.close(data-dismiss="modal", aria-label="Close") 
+                        span(aria-hidden="true") &times;
+                    h4.modal-title Remove Setting
+                form(action=base_url +"/setting/delete", method="post")
+                    div.modal-body
+                        div.form-group
+                            label.control-label(for="setting_id") Setting:
+                            select.form-control(name="setting_id" data-placeholder="Choose a Setting...", required)
+                                each scene_setting in scene_settings
+                                    option(value=scene_setting['id']) #{scene_setting['setting_name']}
+                    div.modal-footer
+                        button.btn.btn-default(data-dismiss="modal", type="button") Close
+                        button.btn.btn-primary Remove

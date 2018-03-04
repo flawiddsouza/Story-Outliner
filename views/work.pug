@@ -1,0 +1,214 @@
+extends layout
+block content
+    - var work_url = '/work/'+ work['id'];
+    div.panel.panel-default
+        div.panel-heading
+            a(href=work_url ) #{work['work_name']}
+            form.inline-block.pull-right(action=work_url +"/delete", method="post") 
+                button.btn.btn-primary.btn-xs.confirm-delete Delete
+        div.panel-body.edit-content(data-name='work_description', data-url=work_url +'/update') #{work['work_description']}
+
+    div.panel.panel-default
+        div.panel-heading Outline
+        div.panel-body.edit-content(data-name='work_outline', data-url=work_url +'/update')
+            != work['work_outline']
+        
+    div.panel.panel-default
+        div.panel-heading.clearfix.vertical-middle Characters
+            button.btn.btn-default.pull-right(data-toggle="modal", data-target="#addCharacter") Add
+        table.table
+            thead
+                tr
+                    th Character Name
+                    th Description
+                    th
+            
+            if characters.length != 0
+                each character in characters
+                    tr.clickable-row(data-href=work_url +"/character/"+ character['id'])
+                        td #{character['character_name']}
+                        td #{character['character_description']}
+                        td
+                            button.btn.btn-primary.btn-xs.quick-edit(data-target="#editCharacter", data-url=work_url +"/character/"+ character['id'] +"/update", data-character-name=character['character_name'], data-character-description=character['character_description'], data-character-index=character['character_index']) Edit
+                            form.inline-block(action=work_url +"/character/"+ character['id'] +"/delete", method="post") 
+                                button.btn.btn-primary.btn-xs.confirm-delete Delete
+            else
+                tr 
+                    td.text-center(colspan="4") ~ Add New Characters to make this go away ~
+
+    div.panel.panel-default
+        div.panel-heading.clearfix.vertical-middle Chapters
+            button.btn.btn-default.pull-right(data-toggle="modal", data-target="#addChapter") Add
+        table.table
+            thead
+                tr
+                    th #
+                    th Chapter Name
+                    th Chapter Description
+                    th
+            
+            if chapters.length != 0
+                each chapter in chapters
+                    tr.clickable-row(data-href=work_url + "/chapter/" + chapter['id'])
+                        td #{chapter['chapter_number']}
+                        td #{chapter['chapter_name']}
+                        td #{chapter['chapter_description']}
+                        td
+                            button.btn.btn-primary.btn-xs.quick-edit(data-target="#editChapter", data-url=work_url +"/chapter/"+ chapter['id'] +"/update", data-chapter-number=chapter['chapter_number'], data-chapter-name=chapter['chapter_name'], data-chapter-description=chapter['chapter_description']) Edit
+                            form.inline-block(action=work_url +"/chapter/"+ chapter['id'] +"/delete", method="post") 
+                                button.btn.btn-primary.btn-xs.confirm-delete Delete
+            else
+                tr 
+                    td.text-center(colspan="4") ~ Add New Chapters to make this go away ~
+
+    div.panel.panel-default
+        div.panel-heading.clearfix.vertical-middle Settings
+            button.btn.btn-default.pull-right(data-toggle="modal", data-target="#addSetting") Add
+        table.table
+            thead
+                tr
+                    th Setting Name
+                    th Description
+                    th
+            
+            if settings.length != 0
+                each setting in settings
+                    tr.clickable-row(data-href=work_url +"/setting/"+ setting['id'])
+                        td #{setting['setting_name']}
+                        td #{setting['setting_description']}
+                        td
+                            button.btn.btn-primary.btn-xs.quick-edit(data-target="#editSetting", data-url=work_url +"/setting/"+ setting['id']+ "/update", data-setting-name=setting['setting_name'], data-setting-description=setting['setting_description']) Edit
+                            form.inline-block(action=work_url +"/setting/"+ setting['id'] +"/delete", method="post") 
+                                button.btn.btn-primary.btn-xs.confirm-delete Delete
+            else
+                tr 
+                    td.text-center(colspan="4") ~ Add New Settings to make this go away ~
+
+    //- Add Chapter Modal - Note: we need tabindex='-1' to be able to close modal using esc key
+    div.modal#addChapter(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title New Chapter
+            form(action=work_url +"/chapter/add", method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="chapter_number") Chapter Number:
+                        input.form-control(type="number", name="chapter_number", required)                    
+                    div.form-group
+                        label.control-label(for="chapter_name") Chapter Name:
+                        input.form-control(type="text", name="chapter_name")
+                    div.form-group
+                        label.control-label(for="chapter_description") Description:
+                        input.form-control(type="text", name="chapter_description")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Add Chapter
+
+    //- Edit Chapter Modal
+    div.modal#editChapter(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title Edit Chapter
+            form(method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="chapter_number") Chapter Number:
+                        input.form-control(type="number", name="chapter_number", required)                    
+                    div.form-group
+                        label.control-label(for="chapter_name") Chapter Name:
+                        input.form-control(type="text", name="chapter_name", required)
+                    div.form-group
+                        label.control-label(for="chapter_description", required) Description:
+                        input.form-control(type="text", name="chapter_description")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Update Chapter
+
+    //- Add Character Modal
+    div.modal#addCharacter(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title New Character
+            form(action=work_url +"/character/add", method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="character_name") Character Name:
+                        input.form-control(type="text", name="character_name", required)
+                    div.form-group
+                        label.control-label(for="character_description") Description:
+                        input.form-control(type="text", name="character_description")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Add Character
+
+    //- Edit Character Modal
+    div.modal#editCharacter(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title Edit Character
+            form(method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="character_name") Character Name:
+                        input.form-control(type="text", name="character_name", required)
+                    div.form-group
+                        label.control-label(for="character_description") Description:
+                        input.form-control(type="text", name="character_description")
+                    div.form-group
+                        label.control-label(for="character_index") Character Index (Optional):
+                        input.form-control(type="number", name="character_index")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Update Character
+
+    //- Add Setting Modal
+    div.modal#addSetting(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title New Setting
+            form(action=work_url +"/setting/add", method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="setting_name") Setting Name:
+                        input.form-control(type="text", name="setting_name", required)
+                    div.form-group
+                        label.control-label(for="setting_description") Description:
+                        input.form-control(type="text", name="setting_description")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Add Setting
+
+    //- Edit Setting Modal
+    div.modal#editSetting(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title Edit Setting
+            form(method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="setting_name") Setting Name:
+                        input.form-control(type="text", name="setting_name", required)
+                    div.form-group
+                        label.control-label(for="setting_description") Description:
+                        input.form-control(type="text", name="setting_description")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Update Setting

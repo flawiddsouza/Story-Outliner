@@ -1,0 +1,67 @@
+extends layout
+block content
+    div.panel.panel-default
+        div.panel-heading.clearfix.vertical-middle Works
+            button.btn.btn-default.pull-right(data-toggle="modal", data-target="#addWork") Add
+        div.panel-body
+            if works.length != 0
+                div.row.row-masonry <!--start masonary style layout -->
+                    each work in works
+                        div.panel.panel-masonry.panel-default.hover-highlight
+                            div.panel-heading.edit-content2(data-name='work_name', data-url='/work/'+ work['id'] +'/update') #{work['work_name']}
+                            a(href='/work/'+ work['id'] +'/')
+                                div.panel-body.remove-a-deco #{work['work_description']}
+            else 
+                div.text-center ~ Add New Stories to make this go away ~
+
+    //- Add Work Modal - Note: we need tabindex='-1' to be able to close modal using esc key
+    div.modal#addWork(tabindex='-1')
+      div.modal-dialog.modal-sm
+        div.modal-content
+            div.modal-header
+                button.close(data-dismiss="modal", aria-label="Close") 
+                    span(aria-hidden="true") &times;
+                h4.modal-title New Work
+            form(action="/work/add", method="post")
+                div.modal-body
+                    div.form-group
+                        label.control-label(for="title") Title:
+                        input.form-control(type="text", name="title", required)
+                    div.form-group
+                        label.control-label(for="description") Description:
+                        input.form-control(type="text", name="description")
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal", type="button") Close
+                    button.btn.btn-primary Add work
+block script
+    //- edit-content2 provides a input[type='text'] instead of a textarea + slightly reduced code thanks to that
+    script.
+        $(document).ready(function() {
+            var count = 0;
+            $('body').on('click', function(e){
+                if($(e.target).hasClass('edit-content2'))
+                {
+                    var value_before_click = $(e.target).html();
+                    if(count < 1)
+                    {
+                        $(e.target).html('<input type="text"></input>');
+                        $(e.target).find('input').focus()
+                        $(e.target).find('input').val(value_before_click);
+                        count++;
+                    }
+                    $(e.target).focusout(function() {
+                        var value_after_click = $(e.target).find('input').val();
+                        $(e.target).html(value_after_click);
+                        if(value_after_click != value_before_click)
+                        {
+                            var name = $(e.target).data('name'),
+                                url = $(e.target).data('url');
+                            var inputs = {};
+                            inputs[name] = value_after_click;
+                            ajaxHelper(inputs, url, "POST");
+                        }
+                        count = 0;
+                    });
+                }
+            });
+        });
